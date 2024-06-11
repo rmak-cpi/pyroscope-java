@@ -37,6 +37,7 @@ func main() {
             "alpine-3.19-8",
             "alpine-3.19-11",
             "alpine-3.19-17",
+            "temurin-21-alpine",
             "ubuntu-18.04-8",
             "ubuntu-18.04-11",
             "ubuntu-18.04-17",

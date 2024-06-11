@@ -65,6 +65,10 @@ public final class Config {
      * Experimental feature, may be removed in the future
      */
     private static final String PYROSCOPE_SAMPLING_EVENT_ORDER_CONFIG = "PYROSCOPE_SAMPLING_EVENT_ORDER";
+    /**
+     * Experimental feature, may be removed in the future
+     */
+    private static final String PYROSCOPE_KUBERNETES_LEADER_ELECTION_GATE_ENABLED = "PYROSCOPE_KUBERNETES_LEADER_ELECTION_GATE_ENABLED";
 
     private static final boolean DEFAULT_AGENT_ENABLED = true;
     public static final String DEFAULT_SPY_NAME = "javaspy";
@@ -86,6 +90,7 @@ public final class Config {
     private static final boolean DEFAULT_ALLOC_LIVE = false;
     private static final boolean DEFAULT_GC_BEFORE_DUMP = false;
     private static final Duration DEFAULT_SAMPLING_DURATION = null;
+    private static final boolean DEFAULT_KUBERNETES_LEADER_ELECTION_GATE_ENABLED = false;
 
     public final boolean agentEnabled;
     public final String applicationName;
@@ -115,6 +120,7 @@ public final class Config {
 
     public final Map<String, String> httpHeaders;
     public final Duration samplingDuration;
+    public final boolean kubernetesLeaderElectionGateEnabled;
     public final String tenantID;
     public final String APLogLevel;
     public final String APExtraArguments;
@@ -143,6 +149,7 @@ public final class Config {
            boolean gcBeforeDump,
            Map<String, String> httpHeaders,
            Duration samplingDuration,
+           final boolean kubernetesLeaderElectionGateEnabled,
            String tenantID,
            String APLogLevel,
            String APExtraArguments,
@@ -166,6 +173,7 @@ public final class Config {
         this.gcBeforeDump = gcBeforeDump;
         this.httpHeaders = httpHeaders;
         this.samplingDuration = samplingDuration;
+        this.kubernetesLeaderElectionGateEnabled = kubernetesLeaderElectionGateEnabled;
         this.tenantID = tenantID;
         this.APLogLevel = APLogLevel;
         this.APExtraArguments = APExtraArguments;
@@ -225,6 +233,7 @@ public final class Config {
             ", allocLive=" + allocLive +
             ", httpHeaders=" + httpHeaders +
             ", samplingDuration=" + samplingDuration +
+            ", kubernetesLeaderElectionGateEnabled=" + kubernetesLeaderElectionGateEnabled +
             ", tenantID=" + tenantID +
             '}';
     }
@@ -246,6 +255,7 @@ public final class Config {
         String alloc = profilingAlloc(cp);
         boolean agentEnabled = bool(cp, PYROSCOPE_AGENT_ENABLED_CONFIG, DEFAULT_AGENT_ENABLED);
         boolean allocLive = bool(cp, PYROSCOPE_ALLOC_LIVE, DEFAULT_ALLOC_LIVE);
+        boolean kubernetesLeaderElectionGateEnabled = bool(cp, PYROSCOPE_KUBERNETES_LEADER_ELECTION_GATE_ENABLED, DEFAULT_KUBERNETES_LEADER_ELECTION_GATE_ENABLED);
         if (DEFAULT_PROFILER_ALLOC.equals(alloc) && allocLive) {
             DefaultLogger.PRECONFIG_LOGGER.log(Logger.Level.WARN, "%s is ignored because %s is not configured",
                 PYROSCOPE_ALLOC_LIVE, PYROSCOPE_PROFILER_ALLOC_CONFIG);
@@ -274,6 +284,7 @@ public final class Config {
             bool(cp, PYROSCOPE_GC_BEFORE_DUMP, DEFAULT_GC_BEFORE_DUMP),
             httpHeaders(cp),
             samplingDuration(cp),
+            kubernetesLeaderElectionGateEnabled,
             tenantID(cp),
             cp.get(PYROSCOPE_AP_LOG_LEVEL_CONFIG),
             cp.get(PYROSCOPE_AP_EXTRA_ARGUMENTS_CONFIG),
@@ -655,6 +666,7 @@ public final class Config {
         public boolean gcBeforeDump = DEFAULT_GC_BEFORE_DUMP;
         public Map<String, String> httpHeaders = new HashMap<>();
         public Duration samplingDuration = DEFAULT_SAMPLING_DURATION;
+        public boolean kubernetesLeaderElectionGateEnabled = DEFAULT_KUBERNETES_LEADER_ELECTION_GATE_ENABLED;
 
         private String tenantID = null;
         private String APLogLevel = null;
@@ -686,6 +698,7 @@ public final class Config {
             gcBeforeDump = buildUpon.gcBeforeDump;
             httpHeaders = new HashMap<>(buildUpon.httpHeaders);
             samplingDuration = buildUpon.samplingDuration;
+            kubernetesLeaderElectionGateEnabled = buildUpon.kubernetesLeaderElectionGateEnabled;
             tenantID = buildUpon.tenantID;
             APLogLevel = buildUpon.APLogLevel;
             APExtraArguments = buildUpon.APExtraArguments;
@@ -808,6 +821,11 @@ public final class Config {
             return this;
         }
 
+        public Builder setKubernetesLeaderElectionGateEnabled(boolean kubernetesLeaderElectionGateEnabled) {
+            this.kubernetesLeaderElectionGateEnabled = kubernetesLeaderElectionGateEnabled;
+            return this;
+        }
+
         public Builder setTenantID(String tenantID) {
             this.tenantID = tenantID;
             return this;
@@ -859,6 +877,7 @@ public final class Config {
                 gcBeforeDump,
                 httpHeaders,
                 samplingDuration,
+                kubernetesLeaderElectionGateEnabled,
                 tenantID,
                 APLogLevel,
                 APExtraArguments,

@@ -85,6 +85,13 @@ services:
         IMAGE_VERSION: 3.19
         JAVA_VERSION: 17
 
+  temurin-21-alpine:
+    build:
+      context: .
+      dockerfile: temurin.Dockerfile
+      args:
+        JAVA_VERSION: 21
+
   ubuntu-18.04-8:
     build:
       context: .

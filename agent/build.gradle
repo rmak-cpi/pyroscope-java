@@ -21,11 +21,22 @@ dependencies {
     api project(":async-profiler-context")
     implementation('com.squareup.okhttp3:okhttp:4.10.0')
     implementation("com.squareup.moshi:moshi:1.14.0")
+    implementation("io.kubernetes:client-java:20.0.1-legacy")
+    implementation("io.kubernetes:client-java-extended:20.0.1-legacy")
+    runtimeOnly 'org.slf4j:slf4j-simple:2.0.13'
     api 'com.google.protobuf:protobuf-java:3.22.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.2'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.2'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.10.0'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.10.0'
+    constraints {
+        implementation('com.nimbusds:nimbus-jose-jwt:9.37.2') {
+            because 'Fixes CVE-2023-52428'
+        }
+        implementation('net.minidev:json-smart:2.4.9') {
+            because 'Fixes CVE-2021-31684 and CVE-2023-1370'
+        }
+    }
 }
 
 jar {
@@ -57,7 +68,9 @@ shadowJar {
 
     archiveFileName = "pyroscope.jar"
 
-    minimize()
+    minimize {
+        exclude(dependency('org.slf4j:slf4j-simple:.*'))
+    }
     archiveClassifier.set('')
 
 }
